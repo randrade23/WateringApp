@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="pt.ruiandrade.watering.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="Add a plant"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/clear_prefs"
+        android:orderInCategory="110"
+        android:title="Clear"
+        app:showAsAction="never"/>
+</menu>
