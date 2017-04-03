@@ -3,7 +3,7 @@ package pt.ruiandrade.watering;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.IntegerRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,13 +17,29 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MainActivity extends AppCompatActivity {
-    ArrayList<DataModel> dataModels;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class MainActivity extends AppCompatActivity implements MqttCallback {
+    static ArrayList<DataModel> dataModels;
     ListView listView;
     private static CustomAdapter adapter;
     private static final String prefsFile = "WATERING_TWITTER";
+    public static String clientID = "0";
+    public static String mqttServer = "tcp://m20.cloudmqtt.com:19438";
+    public static String mqttUser = "kmtohweo";
+    public static String mqttPassword = "8f6BWdD525pW";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         listView=(ListView)findViewById(R.id.list);
-        refreshList();
+        refreshList(true, true);
     }
 
     @Override
@@ -55,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if (id == R.id.clear_prefs) {
             this.getSharedPreferences(prefsFile, 0).edit().clear().commit();
-            refreshList();
+            refreshList(true, true);
         }
 
         return super.onOptionsItemSelected(item);
@@ -91,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("WATERING", name);
                         Log.d("WATERING", id);
                         editor.commit();
-                        refreshList();
+                        refreshList(true, true);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -122,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
         return numberPlants;
     }
 
-    public void refreshList() {
-        dataModels = getPlants();
+    public void refreshList(boolean subscribe, boolean overwrite) {
+        if (overwrite) dataModels = getPlants();
         adapter= new CustomAdapter(dataModels,getApplicationContext());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -134,5 +150,99 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("No action", null).show();
             }
         });
+        if (subscribe) subscribeStateRefresh();
     }
+
+    public void subscribeStateRefresh() {
+        clientID = MqttClient.generateClientId();
+        final MqttAndroidClient client = new MqttAndroidClient(this.getApplicationContext(), mqttServer, clientID);
+        try {
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setUserName(mqttUser);
+            options.setPassword(mqttPassword.toCharArray());
+            IMqttToken token = client.connect(options);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    // We are connected
+                    Log.w("WATERING", "onSuccess");
+                    client.setCallback(MainActivity.this);
+                    for (DataModel p : dataModels) {
+                        final String topic = "plants/" + p.getId() + "/set/#";
+                        final int qos = 0;
+                        try {
+                            IMqttToken subToken = client.subscribe(topic, qos);
+                            subToken.setActionCallback(new IMqttActionListener() {
+                                @Override
+                                public void onSuccess(IMqttToken asyncActionToken) {
+                                    // successfully subscribed
+                                    Log.w("WATERING", "Successfully subscribed to: " + topic);
+
+                                }
+
+                                @Override
+                                public void onFailure(IMqttToken asyncActionToken,
+                                                      Throwable exception) {
+                                    // The subscription could not be performed, maybe the user was not
+                                    // authorized to subscribe on the specified topic e.g. using wildcards
+                                    Log.w("WATERING", "Couldn't subscribe to: " + topic);
+
+                                }
+                            });
+                        } catch (MqttException e) {
+                            e.printStackTrace();
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+                    Log.w("WATERING", "onFailure");
+                    exception.printStackTrace();
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void connectionLost(Throwable cause) {
+
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+        /*
+        * To test ,publish  "open"/"close" at topic you subscibed app to in above .
+        * */
+        Log.d("WATERING",message.toString());
+        Log.w("WATERING", "Topic: "+topic+"\nMessage: "+message);
+        String[] parsedTopic = topic.split("/");
+        String plantID = parsedTopic[1];
+        String sensor = parsedTopic[3];
+        int value = Integer.parseInt(message.toString());
+        for (DataModel p : dataModels) {
+            if (p.getId().equals(plantID)) {
+                if (sensor.equals("light"))
+                    p.luminosity = value;
+                else if (sensor.equals("temperature"))
+                    p.temperature = value;
+                else if (sensor.equals("humidity"))
+                    p.humidity = value;
+                break;
+            }
+        }
+        refreshList(false, false);
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+
+    }
+
 }
