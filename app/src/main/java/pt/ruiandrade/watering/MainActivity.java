@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                     Log.w("WATERING", "onSuccess");
                     client.setCallback(MainActivity.this);
                     for (DataModel p : dataModels) {
-                        final String topic = "plants/" + p.getId() + "/set/#";
+                        final String topic = "plants/" + p.getId() + "/sensors/#";
                         final int qos = 0;
                         try {
                             IMqttToken subToken = client.subscribe(topic, qos);
