@@ -1,6 +1,7 @@
 package pt.ruiandrade.watering;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.IntegerRes;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     public static String mqttServer = "tcp://m20.cloudmqtt.com:19438";
     public static String mqttUser = "kmtohweo";
     public static String mqttPassword = "8f6BWdD525pW";
+    public static DataModel selectedPlant = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +148,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 DataModel dataModel= dataModels.get(position);
-                Snackbar.make(view, dataModel.getName()+"\n"+dataModel.getId(), Snackbar.LENGTH_LONG)
-                        .setAction("No action", null).show();
+                /*Snackbar.make(view, dataModel.getName()+"\n"+dataModel.getId(), Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();*/
+                Intent intent = new Intent(getBaseContext(), PlantStatusActivity.class);
+                selectedPlant = dataModel;
+                startActivity(intent);
             }
         });
         if (subscribe) subscribeStateRefresh();
@@ -238,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
             }
         }
         refreshList(false, false);
+        PlantStatusActivity.updateStatus();
     }
 
     @Override
