@@ -27,7 +27,7 @@ public class DataModel {
 
     public int getHumidity() { return humidity; }
 
-    public int getTemperature() { return humidity; }
+    public int getTemperature() { return temperature; }
 
     public int getLuminosity() { return luminosity; }
 
