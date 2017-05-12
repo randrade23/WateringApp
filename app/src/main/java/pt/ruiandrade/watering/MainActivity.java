@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                     Log.w("WATERING", "onSuccess");
                     client.setCallback(MainActivity.this);
                     for (DataModel p : dataModels) {
-                        final String topic = "plants/" + p.getId() + "/sensors/#";
+                        final String topic = "plants/" + p.getId() + "/#";
                         final int qos = 0;
                         try {
                             IMqttToken subToken = client.subscribe(topic, qos);
@@ -229,10 +229,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         Log.w("WATERING", "Topic: "+topic+"\nMessage: "+message);
         String[] parsedTopic = topic.split("/");
         String plantID = parsedTopic[1];
+        String command = parsedTopic[2];
         String sensor = parsedTopic[3];
         int value = Integer.parseInt(message.toString());
         for (DataModel p : dataModels) {
-            if (p.getId().equals(plantID)) {
+            if (p.getId().equals(plantID) && !command.equals("set")) {
                 if (sensor.equals("light"))
                     p.luminosity = value;
                 else if (sensor.equals("temperature"))

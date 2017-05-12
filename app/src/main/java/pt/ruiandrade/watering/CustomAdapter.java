@@ -97,8 +97,8 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
             result=convertView;
         }
 
-        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        result.startAnimation(animation);
+        /*Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+        result.startAnimation(animation);*/
         lastPosition = position;
 
 

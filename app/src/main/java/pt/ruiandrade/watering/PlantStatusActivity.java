@@ -17,6 +17,9 @@ public class PlantStatusActivity extends AppCompatActivity {
     static ProgressBar progTemperature = null;
     static TextView psName = null;
     static TextView psID = null;
+    static TextView tvLumen = null;
+    static TextView tvHumid = null;
+    static TextView tvTemp = null;
     private static final int ANIMATION_DURATION = 750;
 
     @Override
@@ -27,6 +30,9 @@ public class PlantStatusActivity extends AppCompatActivity {
         progHumidity = (ProgressBar) findViewById(R.id.progHumidity);
         progLuminosity = (ProgressBar) findViewById(R.id.progLuminosity);
         progTemperature = (ProgressBar) findViewById(R.id.progTemperature);
+        tvLumen = (TextView) (findViewById(R.id.tvLumen));
+        tvHumid = (TextView) (findViewById(R.id.tvHumi));
+        tvTemp = (TextView) (findViewById(R.id.tvTemp));
         psName = (TextView) findViewById(R.id.psName);
         psID = (TextView) findViewById(R.id.psID);
         psName.setText(selectedPlant.getName());
@@ -57,5 +63,8 @@ public class PlantStatusActivity extends AppCompatActivity {
                 });
             }
         });
+        tvLumen.setText(selectedPlant.getLuminosity() + "");
+        tvHumid.setText(selectedPlant.getHumidity() + "");
+        tvTemp.setText(selectedPlant.getTemperature() + "");
     }
 }
