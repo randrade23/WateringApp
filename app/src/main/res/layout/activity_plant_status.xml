@@ -154,33 +154,180 @@
         android:id="@+id/toggleLumen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/progLuminosity"
+        android:layout_below="@+id/progHumidity"
+        android:layout_toStartOf="@+id/progHumidity"
+        android:checked="true"
         android:text="ToggleButton"
         android:textOff="Manual"
-        android:textOn="Auto"
-        android:layout_below="@+id/progHumidity"
-        android:layout_alignStart="@+id/progLuminosity"
-        android:layout_toStartOf="@+id/progHumidity" />
+        android:textOn="Auto" />
 
     <ToggleButton
         android:id="@+id/toggleHumid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/progHumidity"
+        android:layout_centerHorizontal="true"
+        android:checked="true"
         android:text="ToggleButton"
         android:textOff="Manual"
-        android:textOn="Auto"
-        android:layout_below="@+id/progHumidity"
-        android:layout_centerHorizontal="true" />
+        android:textOn="Auto" />
 
     <ToggleButton
         android:id="@+id/toggleTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/progTemperature"
+        android:layout_below="@+id/progTemperature"
+        android:layout_toEndOf="@+id/progHumidity"
+        android:checked="true"
         android:text="ToggleButton"
         android:textOff="Manual"
-        android:textOn="Auto"
-        android:layout_below="@+id/progTemperature"
-        android:layout_alignEnd="@+id/progTemperature"
-        android:layout_toEndOf="@+id/progHumidity" />
+        android:textOn="Auto" />
+
+    <EditText
+        android:id="@+id/tvDLumi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/toggleLumen"
+        android:layout_alignStart="@+id/toggleLumen"
+        android:layout_below="@+id/toggleLumen"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Lum. pretendida"
+        android:inputType="number"
+        android:textSize="12sp"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/btnEnvLumi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tvDLumi"
+        android:layout_alignStart="@+id/tvDLumi"
+        android:layout_below="@+id/rdIdle"
+        android:text="Enviar"
+        android:visibility="visible" />
+
+    <RadioButton
+        android:id="@+id/rdCooling"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/rdHeating"
+        android:layout_alignStart="@+id/rdHeating"
+        android:layout_below="@+id/rdHeating"
+        android:text="Cooling"
+        android:visibility="invisible" />
+
+    <RadioButton
+        android:id="@+id/rdHeating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/toggleTemp"
+        android:layout_alignStart="@+id/toggleTemp"
+        android:layout_alignTop="@+id/tvDLumi"
+        android:text="Heating"
+        android:visibility="invisible" />
+
+    <RadioButton
+        android:id="@+id/rdIdle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/rdCooling"
+        android:layout_alignStart="@+id/rdCooling"
+        android:layout_below="@+id/rdCooling"
+        android:text="Idle"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnEnvTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/rdIdle"
+        android:layout_alignStart="@+id/rdIdle"
+        android:layout_below="@+id/rdIdle"
+        android:text="Enviar"
+        android:visibility="visible" />
+
+    <EditText
+        android:id="@+id/tvTempMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvDLumi"
+        android:layout_alignEnd="@+id/rdCooling"
+        android:layout_alignStart="@+id/rdCooling"
+        android:layout_alignTop="@+id/rdHeating"
+        android:ems="10"
+        android:hint="Min"
+        android:inputType="number"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/tvTempMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/rdCooling"
+        android:layout_alignStart="@+id/rdCooling"
+        android:layout_below="@+id/tvTempMin"
+        android:ems="10"
+        android:hint="Max"
+        android:inputType="number"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/tvTmpRega"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/toggleHumid"
+        android:layout_alignStart="@+id/toggleHumid"
+        android:layout_alignTop="@+id/tvDLumi"
+        android:ems="10"
+        android:hint="Tempo rega"
+        android:inputType="number"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/tvTmpEntreRega"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rdIdle"
+        android:layout_alignEnd="@+id/tvTmpRega"
+        android:layout_alignStart="@+id/tvTmpRega"
+        android:ems="10"
+        android:hint="T. entre rega"
+        android:inputType="number"
+        android:textSize="10sp"
+        android:layout_below="@+id/rdHeating" />
+
+    <EditText
+        android:id="@+id/tvDHumi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnEnvTemp"
+        android:layout_alignEnd="@+id/tvTmpEntreRega"
+        android:layout_alignStart="@+id/tvTmpEntreRega"
+        android:ems="10"
+        android:hint="Hum. pretendida"
+        android:inputType="number"
+        android:textSize="10sp"
+        android:layout_below="@+id/tvTmpEntreRega" />
+
+    <Button
+        android:id="@+id/btnEnvHumi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvDHumi"
+        android:layout_below="@+id/tvDHumi"
+        android:text="Enviar" />
+
+    <CheckBox
+        android:id="@+id/chkRega"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tvTmpRega"
+        android:layout_alignStart="@+id/tvTmpRega"
+        android:layout_alignTop="@+id/rdHeating"
+        android:text="Rega" />
 
 
 </RelativeLayout>

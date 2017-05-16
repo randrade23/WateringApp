@@ -231,9 +231,9 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         String plantID = parsedTopic[1];
         String command = parsedTopic[2];
         String sensor = parsedTopic[3];
-        int value = Integer.parseInt(message.toString());
         for (DataModel p : dataModels) {
             if (p.getId().equals(plantID) && !command.equals("set")) {
+                int value = Integer.parseInt(message.toString());
                 if (sensor.equals("light"))
                     p.luminosity = value;
                 else if (sensor.equals("temperature"))
@@ -241,6 +241,16 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                 else if (sensor.equals("humidity"))
                     p.humidity = value;
                 break;
+            }
+            if (p.getId().equals(plantID) && command.equals("set") && parsedTopic.length > 4) {
+                boolean flag = (message.toString().equals("auto"));
+                Log.w("WATERING", message.toString() + " " + flag);
+                if (sensor.equals("temperature"))
+                    p.autoTemp = flag;
+                if (sensor.equals("light"))
+                    p.autoLumi = flag;
+                if (sensor.equals("humidity"))
+                    p.autoHumi = flag;
             }
         }
         refreshList(false, false);

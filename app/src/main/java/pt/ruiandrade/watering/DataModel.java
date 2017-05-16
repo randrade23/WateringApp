@@ -7,7 +7,9 @@ public class DataModel {
     int humidity;
     int temperature;
     int luminosity;
-
+    boolean autoHumi;
+    boolean autoTemp;
+    boolean autoLumi;
 
     public DataModel(String name, String id) {
         this.name=name;
@@ -15,6 +17,9 @@ public class DataModel {
         this.humidity = 0;
         this.temperature = 0;
         this.luminosity = 0;
+        this.autoHumi = true;
+        this.autoTemp = true;
+        this.autoLumi = true;
     }
 
 
