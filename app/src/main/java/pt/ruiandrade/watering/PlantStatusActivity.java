@@ -11,9 +11,11 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -53,9 +55,9 @@ public class PlantStatusActivity extends AppCompatActivity {
     static Button btnEnvHumi = null;
     private static final int ANIMATION_DURATION = 750;
     public static String clientID = "0";
-    public static String mqttServer = "tcp://m20.cloudmqtt.com:19438";
+    public static String mqttServer = "tcp://192.168.43.237:1883";
     public static String mqttUser = "kmtohweo";
-    public static String mqttPassword = "8f6BWdD525pW";
+    public static String mqttPassword = "se2017";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +136,7 @@ public class PlantStatusActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+                Log.w("WATERING", selectedPlant.autoTemp + "");
                 if (!selectedPlant.autoTemp) {
                     String state = rdHeating.isChecked() ? "heating" : rdCooling.isChecked() ? "cooling" : "idle";
                     publishMessage("plants/" + selectedPlant.id + "/set/hvac/state", state, true);
@@ -154,10 +157,29 @@ public class PlantStatusActivity extends AppCompatActivity {
                 }
                 else {
                     String state = tvTmpRega.getText().toString() + ";" + tvTmpEntreRega.getText().toString() + ";" + tvDHumi.getText().toString();
-                    publishMessage("plants/" + selectedPlant.id + "/set/temperature", state, true);
+                    publishMessage("plants/" + selectedPlant.id + "/set/humidity", state, true);
                 }
             }
         });
+        rdCooling.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                rdHeating.setChecked(false);
+                rdIdle.setChecked(false);
+            }
+        });
+        rdHeating.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                rdCooling.setChecked(false);
+                rdIdle.setChecked(false);
+            }
+        });
+        rdIdle.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                rdHeating.setChecked(false);
+                rdCooling.setChecked(false);
+            }
+        });
+
     }
 
     public static void updateStatus() {

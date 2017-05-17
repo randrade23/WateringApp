@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     private static CustomAdapter adapter;
     private static final String prefsFile = "WATERING_TWITTER";
     public static String clientID = "0";
-    public static String mqttServer = "tcp://m20.cloudmqtt.com:19438";
+    public static String mqttServer = "tcp://192.168.43.237:1883";
     public static String mqttUser = "kmtohweo";
-    public static String mqttPassword = "8f6BWdD525pW";
+    public static String mqttPassword = "se2017";
     public static DataModel selectedPlant = null;
 
     @Override
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         String sensor = parsedTopic[3];
         for (DataModel p : dataModels) {
             if (p.getId().equals(plantID) && !command.equals("set")) {
-                int value = Integer.parseInt(message.toString());
+                int value = Double.valueOf(message.toString()).intValue();
                 if (sensor.equals("light"))
                     p.luminosity = value;
                 else if (sensor.equals("temperature"))
