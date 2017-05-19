@@ -55,7 +55,7 @@ public class PlantStatusActivity extends AppCompatActivity {
     static Button btnEnvHumi = null;
     private static final int ANIMATION_DURATION = 750;
     public static String clientID = "0";
-    public static String mqttServer = "tcp://192.168.43.237:1883";
+    public static String mqttServer = "tcp://192.168.42.237:1883";
     public static String mqttUser = "kmtohweo";
     public static String mqttPassword = "se2017";
 

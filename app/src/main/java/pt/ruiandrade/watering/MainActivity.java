@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     private static CustomAdapter adapter;
     private static final String prefsFile = "WATERING_TWITTER";
     public static String clientID = "0";
-    public static String mqttServer = "tcp://192.168.43.237:1883";
+    public static String mqttServer = "tcp://192.168.42.237:1883";
     public static String mqttUser = "kmtohweo";
     public static String mqttPassword = "se2017";
     public static DataModel selectedPlant = null;
@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                         Log.d("WATERING", name);
                         Log.d("WATERING", id);
                         editor.commit();
+                        publishMessage("plants/" + id + "/name/set", name, false);
                         refreshList(true, true);
                     }
                 })
@@ -260,6 +261,44 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
 
+    }
+
+
+    public void publishMessage(final String topic, final String message, final boolean retained) {
+        clientID = MqttClient.generateClientId();
+        final MqttAndroidClient client = new MqttAndroidClient(this.getApplicationContext(), mqttServer, clientID);
+        try {
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setUserName(mqttUser);
+            options.setPassword(mqttPassword.toCharArray());
+            IMqttToken token = client.connect(options);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    // We are connected
+                    Log.w("WATERING", "onSuccess");
+                    MqttMessage msg = new MqttMessage();
+                    msg.setPayload(message.getBytes());
+                    msg.setRetained(retained);
+                    try {
+                        client.publish(topic, msg);
+                        client.disconnect();
+                    } catch (Exception e) {
+                        Log.w("WATERING", "onFailure");
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+                    Log.w("WATERING", "onFailure");
+                    exception.printStackTrace();
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
 }
